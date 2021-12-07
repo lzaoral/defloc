@@ -1,5 +1,8 @@
 # defloc
 
+[![Haskell CI](https://github.com/lzaoral/defloc/actions/workflows/haskell-ci.yml/badge.svg)](https://github.com/lzaoral/defloc/actions/workflows/haskell-ci.yml)
+[![Copr build status](https://copr.fedorainfracloud.org/coprs/lzaoral/defloc/package/defloc/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/lzaoral/defloc/)
+
 Simple tool based on ShellCheck's parser that can be used to find definitions
 of functions in shell scripts.
 
