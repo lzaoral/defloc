@@ -62,14 +62,14 @@ tests = TestList [
                                                       "simple.sh:foo1:11:1-13:2"
                                                   ]
                                                 }
-    ,  "simple regex"      ~: makeTest TestInfo { function = "foo\\d"
+    , "simple regex"       ~: makeTest TestInfo { function = "foo\\d"
                                                 , file     = "simple.sh"
                                                 , isOK     = True
                                                 , expected = strJoin [
                                                       "simple.sh:foo1:11:1-13:2"
                                                   ]
                                                 }
-    ,  "non-fatal error"   ~: makeTest TestInfo { function = "foo"
+    , "non-fatal error"    ~: makeTest TestInfo { function = "foo"
                                                 , file     = "error.sh"
                                                 , isOK     = True
                                                 , expected = strJoin [
@@ -84,6 +84,7 @@ tests = TestList [
                                                   ]
                                                 }
     ]
+
 
 main :: IO ()
 main = do
