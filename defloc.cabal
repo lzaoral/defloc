@@ -17,7 +17,8 @@ copyright:          (c) 2021-2022 Red Hat, Inc.
 
 category:           Development
 
-extra-source-files: CHANGELOG.md
+extra-source-files: CHANGELOG.md,
+                    tests/*.sh
 
 tested-with:        GHC ==8.10.7 || ==9.0.1 || ==9.2.1
 
@@ -37,5 +38,16 @@ executable defloc
     other-modules:
     build-depends:    base >= 4 && < 5,
                       defloc
+    default-language: Haskell2010
+    ghc-options:      -Wall
+
+test-suite test-defloc
+    type:             exitcode-stdio-1.0
+    main-is:          Test.hs
+    build-depends:    base >= 4 && < 5,
+                      defloc,
+                      filepath,
+                      HUnit
+    hs-source-dirs:   tests
     default-language: Haskell2010
     ghc-options:      -Wall
