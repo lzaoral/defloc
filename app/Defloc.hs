@@ -19,7 +19,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -}
 
-module Main (main) where
+module Defloc (main, processReport, processFiles, findFuncTokenIds) where
 
 import ShellCheck.AST
 import ShellCheck.Interface
