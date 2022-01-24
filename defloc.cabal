@@ -1,7 +1,7 @@
 cabal-version:      2.4
 
 name:               defloc
-version:            0.1.0.0
+version:            0.2.0.0
 synopsis:           Finds locations of function definitions in shell scripts
 description:        Simple tool based on ShellCheck's parser that can be used
                     to find definitions of functions in shell scripts.
