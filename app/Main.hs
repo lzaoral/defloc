@@ -1,7 +1,7 @@
 {-# LANGUAGE TupleSections #-}
 
 {-
-    Copyright (C) 2021 Red Hat, Inc.
+    Copyright (C) 2021-2022 Red Hat, Inc.
 
     This file is part of defloc.
 
@@ -29,10 +29,9 @@ import Control.Monad (when)
 import Control.Monad.Except (ExceptT, runExceptT, throwError, liftIO)
 
 import Data.Functor.Identity (runIdentity)
-import Data.Maybe (fromJust, isJust, isNothing)
+import Data.Maybe (fromJust, isNothing)
 
 import qualified Data.Map  as M
-import qualified Data.List as L
 
 import System.Environment (getArgs)
 import System.IO (hPutStrLn, stderr)
@@ -116,16 +115,11 @@ type ProcessMonad = ExceptT String IO
 processReport :: String -> (FilePath, ParseResult) -> ProcessMonad ()
 processReport func (file, result) = do
     -- ShellCheck does not export the ParseResult data constructor
-    let comments    = prComments result
-        positionMap = prTokenPositions result
+    let positionMap = prTokenPositions result
         root        = prRoot result
 
     when (isNothing root) $ throwError $
         file ++ ": Parsing failed (no AST generated)"
-
-    let com = L.find ((== ErrorC) . cSeverity . pcComment) comments
-    when (isJust com) $ throwError $
-        file ++ ": Parsing failed (incomplete AST generated)"
 
     let ids = findFuncTokenIds func $ fromJust root
     mapM_ (\(i, f) -> printLoc f $ fromJust $ M.lookup i positionMap) ids
