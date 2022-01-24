@@ -26,7 +26,6 @@ library
     other-extensions: TupleSections
     build-depends:    base >= 4 && < 5,
                       containers,
-                      mtl,
                       regex-pcre,
                       ShellCheck >= 0.7.2 && < 0.9
     hs-source-dirs:   app

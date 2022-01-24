@@ -19,14 +19,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -}
 
-module Defloc (main, processReport, processFiles, findFuncTokenIds) where
+module Defloc (findFuncTokenIds, main, parse, processFiles, processReport) where
 
 import ShellCheck.AST
 import ShellCheck.Interface
 import ShellCheck.Parser
 
 import Control.Monad (when)
-import Control.Monad.Except (ExceptT, runExceptT, throwError, liftIO)
 
 import Data.Functor.Identity (runIdentity)
 import Data.Maybe (fromJust, isNothing)
@@ -110,36 +109,36 @@ findFuncTokenIds func (OuterToken tokID it) = case it of
     where ff = findFuncTokenIds func
 
 
-type ProcessMonad = ExceptT String IO
-
-processReport :: String -> (FilePath, ParseResult) -> ProcessMonad ()
+processReport :: String -> (FilePath, ParseResult) -> Either String [String]
 processReport func (file, result) = do
     -- ShellCheck does not export the ParseResult data constructor
-    let positionMap = prTokenPositions result
-        root        = prRoot result
+    let root = prRoot result
 
-    when (isNothing root) $ throwError $
-        file ++ ": Parsing failed (no AST generated)"
+    when (isNothing root) $ Left $ file ++ ": Parsing failed (no AST generated)"
 
     let ids = findFuncTokenIds func $ fromJust root
-    mapM_ (\(i, f) -> printLoc f $ fromJust $ M.lookup i positionMap) ids
+    return $ getLoc <$> ids
+        where getLoc (i, f) = strPos f $ fromJust $ M.lookup i $ prTokenPositions result
+              strPos f (from, to) = concat [posFile from, ":", f, ":",
+                                            strLoc from, "-", strLoc to]
+              strLoc pos          = concat [show (posLine pos), ":",
+                                    show (posColumn pos)]
 
-    where printLoc f          = liftIO . putStrLn . strPos f
-          strPos f (from, to) = concat [posFile from, ":", f, ":", strLoc from,
-                                        "-", strLoc to]
-          strLoc pos          = concat [show (posLine pos), ":",
-                                        show (posColumn pos)]
+
+parse :: (FilePath, String) -> (FilePath, ParseResult)
+parse (file, contents) = (file, runIdentity $ parseScript intf spec)
+    where intf = mockedSystemInterface []
+          spec = newParseSpec { psFilename = file,
+                                psScript   = contents }
 
 
 processFiles :: String -> [(FilePath, String)] -> IO ()
 processFiles func = mapM_ process
-    where process x = runExceptT (processReport func $ parse x) >>= handle
-          parse (file, contents) = (file, runIdentity $ parseScript intf spec)
-              where intf = mockedSystemInterface []
-                    spec = newParseSpec { psFilename = file,
-                                          psScript   = contents }
-          handle (Left e) = hPutStrLn stderr e
-          handle _ = return ()
+    where process x = handle $ processReport func $ parse x
+
+          handle :: Either String [String] -> IO ()
+          handle (Left  e)  = hPutStrLn stderr e
+          handle (Right xs) = mapM_ putStrLn xs
 
 
 -- Argument parsing
