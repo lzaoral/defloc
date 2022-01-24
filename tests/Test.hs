@@ -19,14 +19,14 @@
 
 module Main (main) where
 
-import Data.Either
+import Data.Either (isRight)
+import Data.List (intercalate)
 import Defloc (parse, processReport)
 
-import System.Exit
-import System.FilePath
+import System.Exit (exitSuccess, exitFailure)
+import System.FilePath ((</>))
 
 import Test.HUnit
-import GHC.OldList (intercalate)
 
 
 data TestInfo = TestInfo { function :: String
