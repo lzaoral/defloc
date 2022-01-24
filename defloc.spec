@@ -9,7 +9,7 @@ Summary:        Finds locations of function definitions in shell scripts
 
 License:        GPLv3+
 Url:            https://github.com/lzaoral/%{name}
-Source0:        https://%{url}/archive/refs/tags/v%{version}/%{name}-%{version}.tar.gz
+Source0:        %{url}/archive/refs/tags/v%{version}/%{name}-%{version}.tar.gz
 
 BuildRequires:  ghc-Cabal-devel
 BuildRequires:  ghc-rpm-macros
